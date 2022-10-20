@@ -76,13 +76,13 @@ public class PlayerCLI implements Listener {
             maze_size_x = 5;
             maze_size_y = 5;
             cell_base_size = 5;
-            cell_height = 4;
+            cell_height = 5;
             cell_walls_thickness = 1;
-            wall = Material.BLACK_WOOL;
+            wall = Material.BLACK_CONCRETE;
             air = Material.AIR;
-            floor = Material.RED_WOOL;
+            floor = Material.WHITE_CONCRETE;
             light_floor = Material.SEA_LANTERN;
-            ceiling = Material.GLASS;
+            ceiling = Material.AIR;
 
             algorithm = new DFS_Algorithm();
         }
