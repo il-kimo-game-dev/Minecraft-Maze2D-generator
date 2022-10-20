@@ -1,0 +1,6 @@
+name: Maze01
+version: '${project.version}'
+main: kimo.com.MazeGeneratorPluginEntry
+api-version: 1.19
+authors: [ Kimo ]
+description: Ohhhhsorcio voglio fa'n labirinto codieuuu
