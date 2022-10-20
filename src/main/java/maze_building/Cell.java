@@ -18,13 +18,13 @@ import org.bukkit.Material;
  */
 
 public class Cell {
-    public enum MATERIAL_DESCRIPTION {WALL, AIR, FLOOR, LIGHT_FLOOR, CEILING}
+    public enum MATERIAL_DESCRIPTION {WALL, AIR, FLOOR, LIGHT, CEILING}
 
-    private int base_size, height;
-    private MATERIAL_DESCRIPTION[][][] blocks;
-    private Material wall, air, floor, light_floor, ceiling;
-    private int walls_thickness = 1;
-    private boolean visited = false;
+    protected int base_size, height;
+    protected MATERIAL_DESCRIPTION[][][] blocks;
+    protected Material wall, air, floor, light_floor, ceiling;
+    protected int walls_thickness = 1;
+    protected boolean visited = false;
 
     public Cell(int base_size, int height) throws SizesException {
         if(base_size < 3 || height < 1) {
@@ -36,6 +36,7 @@ public class Cell {
             this.floor = Material.RED_WOOL;
             this.air = Material.AIR;
             this.light_floor = Material.SEA_LANTERN;
+            this.ceiling = Material.GLASS;
             blocks = new MATERIAL_DESCRIPTION[base_size][base_size][height];
 
             init();
@@ -45,31 +46,38 @@ public class Cell {
     public Cell(int base_size, int height, int wall_thickness,
                 Material wall, Material air, Material floor,
                 Material light_floor, Material ceiling) throws SizesException {
-        this(base_size, height);
-
-        this.walls_thickness = wall_thickness;
-        this.wall = wall;
-        this.air = air;
-        this.floor = floor;
-        this.light_floor = light_floor;
-        this.ceiling = ceiling;
-    }
-
-    public Cell(int base_size, int height, Material wall, Material floor, Material air, Material light_floor) throws SizesException {
         if(base_size < 3 || height < 1) {
             throw new SizesException("This are not valid sizes for Cells in a minecraft labyrinth!");
         } else {
             this.base_size = base_size;
             this.height = height;
-            this.wall = (wall != null) ? wall : Material.BLACK_WOOL;
-            this.floor = (floor != null) ? floor : Material.RED_WOOL;
-            this.air = (air != null) ? air : Material.AIR;
-            this.light_floor = (light_floor != null) ? light_floor : Material.SEA_LANTERN;
+            this.walls_thickness = wall_thickness;
+            this.wall = wall;
+            this.air = air;
+            this.floor = floor;
+            this.light_floor = light_floor;
+            this.ceiling = ceiling;
             blocks = new MATERIAL_DESCRIPTION[base_size][base_size][height];
 
             init();
         }
     }
+
+//    public Cell(int base_size, int height, Material wall, Material floor, Material air, Material light_floor) throws SizesException {
+//        if(base_size < 3 || height < 1) {
+//            throw new SizesException("This are not valid sizes for Cells in a minecraft labyrinth!");
+//        } else {
+//            this.base_size = base_size;
+//            this.height = height;
+//            this.wall = (wall != null) ? wall : Material.BLACK_WOOL;
+//            this.floor = (floor != null) ? floor : Material.RED_WOOL;
+//            this.air = (air != null) ? air : Material.AIR;
+//            this.light_floor = (light_floor != null) ? light_floor : Material.SEA_LANTERN;
+//            blocks = new MATERIAL_DESCRIPTION[base_size][base_size][height];
+//
+//            init();
+//        }
+//    }
 
     public int getHeight() { return height; }
     public Material getCeiling() { return ceiling; }
@@ -92,16 +100,16 @@ public class Cell {
         if(base_size % 2 == 0) {
             for(int x = base_size/2-1; x < base_size/2+1; ++x) {
                 for(int y = base_size/2-1; y < base_size/2+1; ++y) {
-                    blocks[x][y][0] = MATERIAL_DESCRIPTION.LIGHT_FLOOR;
+                    blocks[x][y][0] = MATERIAL_DESCRIPTION.LIGHT;
                 }
             }
         } else {
-            blocks[base_size/2][base_size/2][0] = MATERIAL_DESCRIPTION.LIGHT_FLOOR;
+            blocks[base_size / 2][base_size / 2][0] = MATERIAL_DESCRIPTION.LIGHT;
         }
     }
 
     // SET & GET -------------------------------------------------------------------------------------------------------
-    private void setVisited(boolean state) {
+    protected void setVisited(boolean state) {
         visited = state;
     }
 
@@ -123,7 +131,7 @@ public class Cell {
         return composition;
     }
 
-    private Material getMaterialFromDescription(MATERIAL_DESCRIPTION description) {
+    protected Material getMaterialFromDescription(MATERIAL_DESCRIPTION description) {
         switch(description) {
             case WALL:
                 return wall;
@@ -131,8 +139,12 @@ public class Cell {
                 return floor;
             case AIR:
                 return air;
-            default:
+            case LIGHT:
                 return light_floor;
+            case CEILING:
+                return ceiling;
+            default:
+                throw new Error("This should not happen!");
         }
     }
 

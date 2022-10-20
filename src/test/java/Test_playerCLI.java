@@ -35,19 +35,22 @@ public class Test_playerCLI {
                 parse_settings_method.setAccessible(true);
                 assertEquals(false, parse_settings_method.invoke(innerClass, ""));
                 assertEquals(false, parse_settings_method.invoke(innerClass, "sus"));
-                assertEquals(false, parse_settings_method.invoke(innerClass, "Labyrinth()"));
+                assertEquals(false, parse_settings_method.invoke(innerClass, "Labyrinth2D()"));
                 assertEquals(false, parse_settings_method.invoke(innerClass, "5, 5"));
-                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth(5, 4)"));
-                assertEquals(false, parse_settings_method.invoke(innerClass, "Labyrinth( , )"));
-                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth(5, 5, 5, 4, 1)"));
-                assertEquals(false, parse_settings_method.invoke(innerClass, "Labyrinth(5, 5, 5, 4, 1, )"));
-                assertEquals(false, parse_settings_method.invoke(innerClass, "Labyrinth(5, 5, 5, 4, n))"));
-                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth(5, 5, COBBLESTONE)"));
-                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth(5, 5, COBBLESTONE, STONE, AIR, GLOWSTONE)"));
-                assertEquals(false, parse_settings_method.invoke(innerClass, "Labyrinth(5, 5, 3, STONE, AIR, GLOWSTONE)"));
-                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth(5, 5, 5, 4, 2, COBBLESTONE, STONE, AIR, GLOWSTONE)"));
-                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth(5, 5, 5, 4, 2, COBBLESTONE, STONE, AIR, GLOWSTONE, AIR)"));
-                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth(5, 5, 5, 4, 2, COBBLESTONE, STONE)"));
+                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth2D(5, 4)"));
+                assertEquals(false, parse_settings_method.invoke(innerClass, "Labyrinth2D( , )"));
+                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth2D(5, 5, 5, 4, 1)"));
+                assertEquals(false, parse_settings_method.invoke(innerClass, "Labyrinth2D(5, 5, 5, 4, 1, )"));
+                assertEquals(false, parse_settings_method.invoke(innerClass, "Labyrinth2D(5, 5, 5, 4, n))"));
+                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth2D(5, 5, COBBLESTONE)"));
+                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth2D(5, 5, COBBLESTONE, STONE, AIR, GLOWSTONE)"));
+                assertEquals(false, parse_settings_method.invoke(innerClass, "Labyrinth2D(5, 5, 3, STONE, AIR, GLOWSTONE)"));
+                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth2D(5, 5, 5, 4, 2, COBBLESTONE, STONE, AIR, GLOWSTONE)"));
+                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth2D(5, 5, 5, 4, 2, COBBLESTONE, STONE, AIR, GLOWSTONE, AIR)"));
+                assertEquals(true, parse_settings_method.invoke(innerClass, "Labyrinth2D(5, 5, 5, 4, 2, COBBLESTONE, STONE)"));
+                assertEquals(false, parse_settings_method.invoke(innerClass, "Labyrinth(5, 5, 5, 4, 2, COBBLESTONE, STONE)"));
+                assertEquals(true, parse_settings_method.invoke(innerClass, "Maze2D(5, 5, 5, 4, 2, COBBLESTONE, STONE)"));
+                assertEquals(false, parse_settings_method.invoke(innerClass, "Maze(5, 5, 5, 4, 2, COBBLESTONE, STONE)"));
             } else {
                 assertEquals(false, true); // wanting to generate a Test error to make people check
             }

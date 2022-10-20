@@ -107,19 +107,30 @@ public class PlayerCLI implements Listener {
 
         /**
          * Accepts a string containing specifics for the
-         * labyrinth creation like Labyrinth(5, 5, 5, 4)
+         * labyrinth creation like Labyrinth2D(5, 5, 5, 4), or Maze2D(5, 5).
+         * You can also specify materials for walls, floor, air, lights and ceiling!
          * @param settings
          */
         private boolean parse_settings(String settings) {
             boolean parsing_successful = false;
             String[] args;
-            Pattern p = Pattern.compile("^Labyrinth\\((([0-9]+, )|([0-9]+, ){4})[0-9]+(, [a-zA-Z._]+){0,5}\\)$");
-            Matcher m = p.matcher(settings);
+            Pattern pattern1 = Pattern.compile("^Labyrinth2D\\((([0-9]+, )|([0-9]+, ){4})[0-9]+(, [a-zA-Z._]+){0,5}\\)$");
+            Pattern pattern2 = Pattern.compile("^Maze2D\\((([0-9]+, )|([0-9]+, ){4})[0-9]+(, [a-zA-Z._]+){0,5}\\)$");
+            Matcher matcher1 = pattern1.matcher(settings);
+            Matcher matcher2 = pattern2.matcher(settings);
+            boolean match = false;
             boolean string_found = false;
             int strings_assigned = 0;
 
-            if(m.matches()) {
-                settings = settings.replace("Labyrinth(", "");
+            if(matcher1.matches()) {
+                settings = settings.replace("Labyrinth2D(", "");
+                match = true;
+            } else if(matcher2.matches()) {
+                settings = settings.replace("Maze2D(", "");
+                match = true;
+            }
+
+            if(match) {
                 settings = settings.replace(")", "");
                 args = settings.split(", ");
 

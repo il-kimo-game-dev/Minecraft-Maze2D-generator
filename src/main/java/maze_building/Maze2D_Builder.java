@@ -115,22 +115,6 @@ public class Maze2D_Builder {
                     }
                 }
             }
-
-            if((ceiling = cell_to_build.getCeiling()) != null) {
-                ceiling_height = cell_to_build.getHeight()-1;
-
-                for(int i = 0; i < cell_composition.length; ++i) {
-                    for(int j = 0; j < cell_composition[i].length; ++j) {
-                        Block block = (
-                                new Location(player.getWorld(),
-                                        sender_location.getBlockX()+cell_base_size+cell_base_size*x+i,
-                                        sender_location.getBlockY()+ceiling_height,
-                                        sender_location.getBlockZ()+cell_base_size*y+j)
-                        ).getBlock();
-                        block.setType(ceiling);
-                    }
-                }
-            }
         }
     }
 
