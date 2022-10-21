@@ -22,7 +22,7 @@ public class Cell {
 
     protected int base_size, height;
     protected MATERIAL_DESCRIPTION[][][] blocks;
-    protected Material wall, air, floor, light_floor, ceiling;
+    protected Material wall, air, floor, light, ceiling;
     protected int walls_thickness = 1;
     protected boolean visited = false;
 
@@ -35,7 +35,7 @@ public class Cell {
             this.wall = Material.BLACK_WOOL;
             this.floor = Material.RED_WOOL;
             this.air = Material.AIR;
-            this.light_floor = Material.SEA_LANTERN;
+            this.light = Material.SEA_LANTERN;
             this.ceiling = Material.GLASS;
             blocks = new MATERIAL_DESCRIPTION[base_size][base_size][height];
 
@@ -45,7 +45,7 @@ public class Cell {
 
     public Cell(int base_size, int height, int wall_thickness,
                 Material wall, Material air, Material floor,
-                Material light_floor, Material ceiling) throws SizesException {
+                Material light, Material ceiling) throws SizesException {
         if(base_size < 3 || height < 1) {
             throw new SizesException("This are not valid sizes for Cells in a minecraft labyrinth!");
         } else {
@@ -55,29 +55,13 @@ public class Cell {
             this.wall = wall;
             this.air = air;
             this.floor = floor;
-            this.light_floor = light_floor;
+            this.light = light;
             this.ceiling = ceiling;
             blocks = new MATERIAL_DESCRIPTION[base_size][base_size][height];
 
             init();
         }
     }
-
-//    public Cell(int base_size, int height, Material wall, Material floor, Material air, Material light_floor) throws SizesException {
-//        if(base_size < 3 || height < 1) {
-//            throw new SizesException("This are not valid sizes for Cells in a minecraft labyrinth!");
-//        } else {
-//            this.base_size = base_size;
-//            this.height = height;
-//            this.wall = (wall != null) ? wall : Material.BLACK_WOOL;
-//            this.floor = (floor != null) ? floor : Material.RED_WOOL;
-//            this.air = (air != null) ? air : Material.AIR;
-//            this.light_floor = (light_floor != null) ? light_floor : Material.SEA_LANTERN;
-//            blocks = new MATERIAL_DESCRIPTION[base_size][base_size][height];
-//
-//            init();
-//        }
-//    }
 
     public int getHeight() { return height; }
     public Material getCeiling() { return ceiling; }
@@ -97,6 +81,10 @@ public class Cell {
             }
         }
 
+        init_lights();
+    }
+
+    protected void init_lights() {
         if(base_size % 2 == 0) {
             for(int x = base_size/2-1; x < base_size/2+1; ++x) {
                 for(int y = base_size/2-1; y < base_size/2+1; ++y) {
@@ -140,7 +128,7 @@ public class Cell {
             case AIR:
                 return air;
             case LIGHT:
-                return light_floor;
+                return light;
             case CEILING:
                 return ceiling;
             default:

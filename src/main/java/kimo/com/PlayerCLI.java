@@ -4,6 +4,7 @@ import maze2D_logic.DFS_Algorithm;
 import maze2D_logic.GenerationAlgorithm;
 import maze2D_logic.Maze2D;
 import maze_building.Maze2D_Builder;
+import maze_building.Maze2D_Compact_Builder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,6 +38,7 @@ public class PlayerCLI implements Listener {
         MinecraftPlayerLogger playerLogger = new MinecraftPlayerLogger(plugin.getName(), sender);
         Maze_settings settings = new Maze_settings(new DFS_Algorithm());
         Maze2D maze;
+        Maze2D_Builder maze_builder;
 
         if(settings.parse_settings(commandStr)) {
             playerLogger.log("Building maze...");
@@ -46,13 +48,18 @@ public class PlayerCLI implements Listener {
                 maze.generate();
                 playerLogger.log("number of maze crossroads:" + maze.count_crossroads());
 
-                (new Maze2D_Builder(plugin, sender))
-                        .build(
-                                maze, settings.cell_base_size,
-                                settings.cell_height, settings.cell_walls_thickness,
-                                settings.wall, settings.air, settings.floor,
-                                settings.light_floor, settings.ceiling
-                        );
+                if(settings.maze_compact) {
+                    maze_builder = new Maze2D_Compact_Builder(plugin, sender);
+                } else {
+                    maze_builder = new Maze2D_Builder(plugin, sender);
+                }
+
+                maze_builder.build(
+                        maze, settings.cell_base_size,
+                        settings.cell_height, settings.cell_walls_thickness,
+                        settings.wall, settings.air, settings.floor,
+                        settings.light_floor, settings.ceiling
+                );
                 result = true;
             } catch(Exception e) {
                 playerLogger.log(e.getMessage());
@@ -69,6 +76,7 @@ public class PlayerCLI implements Listener {
     public class Maze_settings {
         int maze_size_x, maze_size_y, cell_base_size, cell_height, cell_walls_thickness;
         Material wall, air, floor, light_floor, ceiling;
+        boolean maze_compact = false;
 
         GenerationAlgorithm algorithm;
 
@@ -91,6 +99,10 @@ public class PlayerCLI implements Listener {
             this();
 
             this.algorithm = algorithm;
+        }
+
+        public void setMaze_compact(boolean compact) {
+            this.maze_compact = compact;
         }
 
         private Material parse_material(String material_name) {
@@ -116,8 +128,12 @@ public class PlayerCLI implements Listener {
             String[] args;
             Pattern pattern1 = Pattern.compile("^Labyrinth2D\\((([0-9]+, )|([0-9]+, ){4})[0-9]+(, [a-zA-Z._]+){0,5}\\)$");
             Pattern pattern2 = Pattern.compile("^Maze2D\\((([0-9]+, )|([0-9]+, ){4})[0-9]+(, [a-zA-Z._]+){0,5}\\)$");
+            Pattern pattern3 = Pattern.compile("^Labyrinth2D_compact\\((([0-9]+, )|([0-9]+, ){4})[0-9]+(, [a-zA-Z._]+){0,5}\\)$");
+            Pattern pattern4 = Pattern.compile("^Maze2D_compact\\((([0-9]+, )|([0-9]+, ){4})[0-9]+(, [a-zA-Z._]+){0,5}\\)$");
             Matcher matcher1 = pattern1.matcher(settings);
             Matcher matcher2 = pattern2.matcher(settings);
+            Matcher matcher3 = pattern3.matcher(settings);
+            Matcher matcher4 = pattern4.matcher(settings);
             boolean match = false;
             boolean string_found = false;
             int strings_assigned = 0;
@@ -127,6 +143,14 @@ public class PlayerCLI implements Listener {
                 match = true;
             } else if(matcher2.matches()) {
                 settings = settings.replace("Maze2D(", "");
+                match = true;
+            } else if(matcher3.matches()) {
+                settings = settings.replace("Labyrinth2D_compact(", "");
+                setMaze_compact(true);
+                match = true;
+            } else if(matcher4.matches()) {
+                settings = settings.replace("Maze2D_compact(", "");
+                setMaze_compact(true);
                 match = true;
             }
 

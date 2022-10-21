@@ -1,6 +1,7 @@
 package maze_building;
 
 import kimo.com.MazeGeneratorPluginEntry;
+import kimo.com.SizesException;
 import maze2D_logic.Directions;
 import maze2D_logic.Maze2D;
 import maze2D_logic.MazeCell;
@@ -11,12 +12,38 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 public class Maze2D_Builder {
-    private Player player;
-    private MazeGeneratorPluginEntry plugin;
+    protected Player player;
+    protected MazeGeneratorPluginEntry plugin;
 
     public Maze2D_Builder(MazeGeneratorPluginEntry plugin, Player player) {
         this.player = player;
         this.plugin = plugin;
+    }
+
+    private void place_axes(Location sender_location) {
+        Block block = (
+                new Location(player.getWorld(),
+                        sender_location.getBlockX()+1,
+                        sender_location.getBlockY()-1,
+                        sender_location.getBlockZ())
+        ).getBlock();
+        block.setType(Material.RED_WOOL);
+
+        block = (
+                new Location(player.getWorld(),
+                        sender_location.getBlockX(),
+                        sender_location.getBlockY()-1,
+                        sender_location.getBlockZ()+1)
+        ).getBlock();
+        block.setType(Material.BLUE_WOOL);
+
+        block = (
+                new Location(player.getWorld(),
+                        sender_location.getBlockX(),
+                        sender_location.getBlockY()-1,
+                        sender_location.getBlockZ())
+        ).getBlock();
+        block.setType(Material.POLISHED_ANDESITE);
     }
 
     public void build(Maze2D maze, int cell_base_size, int cell_height,
@@ -36,7 +63,7 @@ public class Maze2D_Builder {
         } else {
             Runnable task = () -> {
                 try {
-                    place_maze_blocks(maze, cell_base_size, cell_height, cell_walls_thickness,
+                    place_maze_blocks(maze.getSize_x(), maze.getSize_y(), maze, cell_base_size, cell_height, cell_walls_thickness,
                                       wall, air, floor, floor_light, ceiling);
                 } catch (Exception e) {
                     exception_message[0] = e.getMessage();
@@ -56,7 +83,14 @@ public class Maze2D_Builder {
         }
     }
 
-    private void place_maze_blocks(Maze2D maze, int cell_base_size, int cell_height,
+    protected Cell get_building_cell(int cell_base_size, int cell_height,
+                                   int cell_walls_thickness, Material wall, Material air,
+                                   Material floor, Material floor_light, Material ceiling) throws SizesException {
+        return new Cell(cell_base_size, cell_height, cell_walls_thickness,
+                wall, air, floor, floor_light, ceiling);
+    }
+
+    private void place_maze_blocks(int maze_size_x, int maze_size_y, Maze2D maze, int cell_base_size, int cell_height,
                                    int cell_walls_thickness, Material wall, Material air,
                                    Material floor, Material floor_light, Material ceiling) throws Exception {
         Location sender_location;
@@ -65,10 +99,13 @@ public class Maze2D_Builder {
 
         try {
             sender_location = player.getLocation();
+
+            place_axes(sender_location);
+
             for(int x = 0; x < maze.getSize_x(); ++x) {
                 for(int y = 0; y < maze.getSize_y(); ++y) {
                     maze_cell = maze.getMazeCell(x, y);
-                    cell_to_build = new Cell(cell_base_size, cell_height, cell_walls_thickness,
+                    cell_to_build = get_building_cell(cell_base_size, cell_height, cell_walls_thickness,
                                              wall, air, floor, floor_light, ceiling);
 
                     if(maze_cell != null) {
@@ -85,7 +122,7 @@ public class Maze2D_Builder {
                             cell_to_build.dig_from(Directions.DIRECTION.EAST);
                         }
 
-                        build_maze_cell(cell_to_build, sender_location, cell_base_size, x, y);
+                        build_maze_cell(maze_size_x, maze_size_y, cell_to_build, sender_location, cell_base_size, x, y);
                     } else {
                         throw new Exception("Exception: maze cell for coords <x, y>=<" + x + ", " + y + "> is null");
                     }
@@ -96,10 +133,8 @@ public class Maze2D_Builder {
         }
     }
 
-    public void build_maze_cell(Cell cell_to_build, Location sender_location, int cell_base_size, int x, int y) {
+    public void build_maze_cell(int maze_size_x, int maze_size_y, Cell cell_to_build, Location sender_location, int cell_base_size, int x, int y) {
         Material[][][] cell_composition = cell_to_build.getComposition();
-        Material ceiling;
-        int ceiling_height;
 
         if(cell_composition != null) {
             for(int i = 0; i < cell_composition.length; ++i) {
@@ -118,7 +153,7 @@ public class Maze2D_Builder {
         }
     }
 
-    public boolean valid_parameters(int cell_base_size, int cell_height, int cell_walls_thickness) {
+    protected boolean valid_parameters(int cell_base_size, int cell_height, int cell_walls_thickness) {
         boolean res = true;
 
         if(cell_base_size < 3) {
